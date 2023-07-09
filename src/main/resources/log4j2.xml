@@ -1,39 +1,51 @@
-<configuration status="WARN" scan="true" scanPeriod="30 seconds">
+<Configuration status="WARN" monitorInterval="30">
     <!--
        LOGGING PATTERN :
-       DEFAULT_MICROS -> Time stamp in microseconds.
+       DEFAULT_MICROS -> Time stamp in micro seconds.
        t -> Thread name
        T -> Thread Id
        level -> Logging level
        logger{36} -> Logging class
        msg -> Message logged
     -->
-    <property name="LOG_PATTERN" value="%d{DEFAULT_MICROS} [%t] [%T] %-5level ${hostName} %logger{36} - %msg%n%throwable{full}" />
-    <property name="LOG_FILE_MAX_SIZE" value="10GB" />
-    <property name="COMPRESSED_LOG_FILE_MAX_AGE" value="P60D" />
+    <Properties>
+        <Property name="LOG_PATTERN">%d{DEFAULT_MICROS} [%t] [%T] %-5level ${hostName} %logger{36} - %msg%n%throwable{full}</Property>
+        <Property name="LOG_FILE_MAX_SIZE">10GB</Property>
+        <Property name="COMPRESSED_LOG_FILE_MAX_AGE">P60D</Property>
+    </Properties>
+    <Appenders>
+        <!--
+        Appender for adding the logs to a file in the ConnectorLogs folder. This file will be read by the external tool for logging UI.
+        -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+        <!--File naming and rolling strategy : Back up log files will be stored as zip in a different folder.-->
+        <RollingFile name="FileAppender" fileName="mp-logs/current.log"
+                     filePattern="mp-logs/backed-up-logs/mp-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>${LOG_PATTERN}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${LOG_FILE_MAX_SIZE}" />
+            </Policies>
+            <!--Deletion strategy : To be triggered at every rollover.
+            If the file matches regex below and is "age" duration old, it will be deleted. Keeping 2 days for testing purpose and 30 for prod-->
+            <DefaultRolloverStrategy fileIndex="nomax">
+                <Delete basePath="mp-logs/backed-up-logs">
+                    <IfFileName glob="*.log.*" />
+                    <IfLastModified age="${COMPRESSED_LOG_FILE_MAX_AGE}" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
 
-    <appender name="ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
-        </encoder>
-    </appender>
+    </Appenders>
+    <Loggers>
+        <Logger name="root" level="INFO">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="FileAppender" />
+        </Logger>
+    </Loggers>
 
-    <appender name="FileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/current.log</file>
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/backed-up-logs/mp-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-            <maxFileSize>${LOG_FILE_MAX_SIZE}</maxFileSize>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy" />
-        <deleteOlderOnRolling>true</deleteOlderOnRolling>
-        <maxHistory>30</maxHistory>
-    </appender>
 
-    <root level="INFO">
-        <appender-ref ref="ConsoleAppender" />
-        <appender-ref ref="FileAppender" />
-    </root>
-</configuration>
+</Configuration>
