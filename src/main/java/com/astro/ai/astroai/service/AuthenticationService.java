@@ -29,8 +29,13 @@ public class AuthenticationService {
 
             AstroAppCustomerPayloadDTO payloadDTO = mapper.convertValue(payload, AstroAppCustomerPayloadDTO.class);
 
-            Customer customer = GlobalUtility.createCustomerToBeSavedInDb(payloadDTO);
-            CustomORM.saveCustomerInDb(customer);
+            String astroAiAppId = payloadDTO.getCustomerDetail().getAstroAiAppId();
+            Customer customerFromDB = CustomORM.findCustomerAstroAppId(astroAiAppId);
+
+            if (customerFromDB == null) {
+                Customer customer = GlobalUtility.createCustomerToBeSavedInDb(payloadDTO);
+                CustomORM.saveCustomerInDb(customer);
+            }
 
         }catch (Exception e) {
 
