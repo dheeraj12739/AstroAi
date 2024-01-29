@@ -95,4 +95,42 @@ public class ReflectionTest {
 
 
     }
+
+    @Test
+    public void givenClass_whenGetAllMethod_thenCorrectOrNot() throws Exception{
+
+        Class<?> birdClass = Class.forName("com.astro.ai.astroai.model.practice.Bird");
+        Method []methods = birdClass.getMethods();
+
+        List<String> methodNames = getActualMethodName(methods);
+
+        assertTrue(methodNames.contains(Arrays.asList("equals", "notifyAll", "hashCode", "walks", "eats", "toString")));
+    }
+
+    @Test
+    public void givenClass_whenGetDeclaredMtehodThen_correct() throws Exception{
+
+        Class<?> birdClass = Class.forName("com.astro.ai.astroai.model.practice.Bird");
+        Method []methods = birdClass.getDeclaredMethods();
+        List<String> methodNames = getActualMethodName(methods);
+        assertTrue(methodNames.containsAll(Arrays.asList("setWalks", "isWalks", "getSound", "eats")));
+    }
+
+    @Test
+    public void givenClass_whenInvokes_thenCorrect() throws Exception{
+
+        Class<?> birdClass = Class.forName("com.astro.ai.astroai.model.practice.Bird");
+        Bird bird = (Bird) birdClass.getConstructor().newInstance();
+        Method setWalksMethod = birdClass.getDeclaredMethod("setWalks", boolean.class);
+        Method isWalksMethod = birdClass.getDeclaredMethod("isWalks");
+        boolean walks = (boolean) isWalksMethod.invoke(bird);
+        assertFalse(walks);
+        assertFalse(bird.isWalks());
+
+        setWalksMethod.invoke(bird,true);
+        boolean walks2 = (boolean) isWalksMethod.invoke(bird);
+        assertTrue(walks2);
+        assertTrue(bird.isWalks());
+
+    }
 }
