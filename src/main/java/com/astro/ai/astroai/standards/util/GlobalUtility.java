@@ -2,11 +2,16 @@ package com.astro.ai.astroai.standards.util;
 
 import com.astro.ai.astroai.model.AstroAppCustomerPayloadDTO;
 import com.astro.ai.astroai.standards.common.GenericResponseDTO;
+import com.astro.ai.astroai.standards.entity.ChatGPTCredentials;
 import com.astro.ai.astroai.standards.entity.Customer;
+import com.astro.ai.astroai.standards.repository.CustomORM;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class GlobalUtility {
 
@@ -41,5 +46,15 @@ public class GlobalUtility {
         customer.setTimeOfBirth(payloadDTO.getCustomerDetail().getTimeOfBirth());
 
         return customer;
+    }
+
+    public static HttpHeaders getChatGPTHeader(){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        List<ChatGPTCredentials> chatGPTCredentials = CustomORM.getChatGPTKey();
+        headers.set("Authorization", "Bearer " + chatGPTCredentials.get(0).getApiKey());
+
+        return headers;
     }
 }

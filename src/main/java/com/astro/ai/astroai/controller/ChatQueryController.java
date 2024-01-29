@@ -1,6 +1,7 @@
 package com.astro.ai.astroai.controller;
 
 import com.astro.ai.astroai.service.ChatQueryService;
+import com.astro.ai.astroai.service.DemoService;
 import com.astro.ai.astroai.standards.common.AbstractServiceResponse;
 import com.astro.ai.astroai.standards.logging.CustomLogManager;
 import com.astro.ai.astroai.standards.logging.CustomLogger;
@@ -22,12 +23,17 @@ public class ChatQueryController {
     @Autowired
     private ChatQueryService chatQueryService;
 
+    @Autowired
+    private DemoService demoService;
+
     @PostMapping(value = "/chatquery", headers = "Accept=application/json")
     public ResponseEntity<AbstractServiceResponse> getChatQueryResult(@RequestBody JsonNode payload) {
 
         logger.info(new LogMessage.LogMessageBuilder("ChatQueryController.getChatQueryResult => called with payload")
                 .put("payload", payload)
                 .build());
+
+        demoService.minJumps();
 
         return chatQueryService.findResultForChatQuery(payload);
     }

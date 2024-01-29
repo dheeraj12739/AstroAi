@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<title>Lotte shipping label</title>
+
+<head>
+
+    <style>
+
+        table, th, td {
+
+            border: 1px solid black;
+
+        }
+
+        #td-invoice {
+            position: relative;
+        }
+
+
+        #barcode-container {
+
+            top: 0.04cm; /* Gap from the top */
+
+            bottom: 0.04cm; /* Gap from the bottom */
+
+            right: 0; /* Align to the right-most of the td */
+
+            width: 2.6cm;
+
+            height: 1.2cm;
+
+            overflow: hidden;
+
+        }
+
+        #barcode-Itfcontainer {
+
+            position: absolute;
+
+            top: 0.04cm; /* Gap from the top */
+
+            bottom: 0.04cm; /* Gap from the bottom */
+
+            right: 0; /* Align to the right-most of the td */
+
+            width: 5cm;
+
+            height: 1.4cm;
+
+            overflow: hidden;
+
+        }
+
+        #barcode-Itfcontainersecond {
+            top: 0.04cm; /* Gap from the top */
+
+            bottom: 0.04cm; /* Gap from the bottom */
+
+            right: auto; /* Align to the right-most of the td */
+
+            width: 4.2cm;
+
+            height: 1.4cm;
+
+            overflow: hidden;
+
+            margin-left: 0cm;
+
+        }
+
+        #barcode {
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+
+        #barcodeItf {
+            width: 5cm;
+            height: 1.4cm;
+        }
+
+        #barcodeItfsecond {
+            width: 4.2cm;
+            height: 1.4cm;
+        }
+
+
+
+
+        .cell-container {
+
+            width: 100%;
+
+            height: 100%;
+
+            display:flex;
+
+            justify-content:space-around;
+
+            align-items:center;
+
+        }
+
+        .bottom-container {
+
+            display:flex;
+            justify-content: space-around;
+            height: auto;
+            margin-top: 1cm;
+
+        }
+
+        .normal-container {
+            padding:0px;
+            margin:0px;
+            width: 100%;
+            height: 100%;
+            vertical-align: top;
+        }
+
+        .normal-div-container {
+            padding:0px;
+            margin:0px;
+            width: 100%;
+        }
+
+
+
+        #left-right-cell-container {
+
+            width: 100%;
+
+            height: 100%;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+        }
+
+        #left-right-cell-container {
+
+            width: 100%;
+
+            height: 100%;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+        }
+
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+
+</head>
+
+<body>
+
+<table style = "width:20cm;height:10cm">
+
+    <tr style = "height:0.5cm;width:11.5cm">
+
+        <td style = "width:8.5cm" rowspan = "4">
+
+            <div class = "cell-container">
+
+                <div> TML_CD TML_ <br> CITY_GUN_GU DONG </div>
+
+                <div id="barcode-container">
+
+                    <svg id="barcode">
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+        </td>
+
+        <td style = "width:11.5cm" >
+
+            <div class="cell-container">
+
+                <div>inv.no</div>
+
+                <div>PickReqYmd</div>
+
+            </div>
+
+        </td>
+
+    </tr>
+
+    <tr style = "height:2cm;width:11.5cm">
+
+        <td style = "width:11.5cm" rowspan = "4">
+
+            <div class = "cell-container" style = "height:50%">
+
+                <div> (Rishik kumar)</div>
+
+                <div>(9340997230) </div>
+
+                <div> (0752223409) </div>
+
+            </div>
+
+            <div class = "cell-container" style = "height:50%;justify-content:start;margin-left:0.6cm">
+
+                <div>(Accepr Addr) </div>
+
+            </div>
+
+            <div></div> <br> </div>
+
+        </td>
+
+    </tr>
+
+    <tr style = "height:0.5cm;width:11.5cm">
+
+    </tr>
+
+    <tr style = "height:0.5cm;width:11.5cm">
+
+    </tr>
+
+    <tr style = "height:0.5cm;width:11.5cm">
+
+        <td style = "width:8.5cm">
+            <div class = "cell-container" style = "justify-content:start;margin-left:0.6cm">(orderno.) </div>
+        </td>
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+        <td style = "width:8.5cm" rowspan= "15">
+            <div class = "normal-container" style = "margin-left:0.6cm">
+                <div>(gdsNm)</div>
+                <div>qty/itemnam </div>
+                <div>qty/itemnam <div>
+                    <div>qty/itemnam </div>
+                    <div>qty/itemnam </div>
+                    <div> <br> </div>
+
+                </div>
+
+                    <div class = "normal-container">
+                        <div>운송장번호 : (invNo.)</div>
+                        <div>보내는 분 : (snperNm)</div>
+                        <div>받는분 : (acperNm) (acperTel) (acperCpno)</div>
+                        <div>주소 : (acperDr)</div>
+                        <div>운임 : (신)</div>
+                    </div>
+
+                    <div class="bottom-container">
+
+                        <div id = "barcode-Itfcontainersecond">
+                            <svg id="barcodeItfsecond">
+
+                            </svg>
+                        </div>
+                        <div style="width: 50%"> BRNSHP_NM <br>  (EMP_NM) </div>
+                    </div>
+
+                </div>
+
+        </td>
+
+        <td style = "width:11.5cm">
+            <div style = "justify-content:start;margin-left:0.6cm">
+                (snperName)/(snperTel)/(snperTelno.)
+            </div>
+        </td>
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+        <td id = "td-invoice" style = "width:11.5cm" rowspan = "4">
+
+            <div class = "cell-container" style = "height:50%;justify-content:start;margin-left:0.6cm">
+                <div> (inv no.)</div>
+
+                <div id = "barcode-Itfcontainer">
+
+                    <svg id="barcodeItf">
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+        </td>
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+        <td style = "width:11.5cm"> </td>
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+        <td style = "width:11.5cm" rowspan ="5">
+
+            <div class = "cell-container" style = "height:40%">
+
+                <div> (Rishik kumar)</div>
+
+                <div>(9340997230) </div>
+
+            </div>
+
+            <div class = "cell-container" style = "height:60%;justify-content:start;margin-left:0.6cm">
+
+                <div>(Accepr Addr) </div>
+
+            </div>
+
+            <div></div> <br> </div>
+
+
+        </td>
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+        <td style = "width:11.5cm" rowspan="2">
+            <div>
+
+                <div class = "cell-container" style = "height:50% ;justify-content:start;margin-left:0.6cm"> (snperAder)</div>
+                <div class = "cell-container" style = "height:50%;justify-content:end;margin-right:0.6cm" >
+                    (snperNm)/(snperTel)/(snperCpno) </div>
+
+            </div>
+        </td>
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+        <td style = "width:11.5cm">
+            <div class = "cell-container" style = "justify-content:start;margin-left:0.6cm"> (gdsnm) </div>
+        </td>
+
+    </tr>
+
+    <tr style = "height:0.5cm">
+
+        <td style = "width:11.5cm">
+
+            <div class = "cell-container" style = "justify-content:start;margin-left:0.6cm">
+                (dlvMsgCont) (cusMsgCont)
+            </div>
+        </td>
+
+    </tr>
+
+</table>
+
+<script>
+
+    JsBarcode("#barcode", "F-50", {
+
+        format: "CODE39"
+
+    });
+
+    JsBarcode("#barcodeItf", "215979441676", {
+        format: "ITF",
+        lineColor: "#000",
+    });
+
+    JsBarcode("#barcodeItfsecond", "215979441676", {
+        format: "ITF",
+        lineColor: "#000",
+    });
+
+
+</script>
+</body>
+
+</html>

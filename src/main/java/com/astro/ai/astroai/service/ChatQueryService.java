@@ -5,6 +5,7 @@ import com.astro.ai.astroai.model.AstroAppQueryRequestDTO;
 import com.astro.ai.astroai.model.aiService.AiServiceMessageDTO;
 import com.astro.ai.astroai.model.aiService.AiServiceRequestBodyDTO;
 import com.astro.ai.astroai.model.aiService.ChatCompletionDTO;
+import com.astro.ai.astroai.model.aiService.gpt4.ChatGPT4RequestBodyDTO;
 import com.astro.ai.astroai.model.vedicAstro.VedicAstroDashaResponseDTO;
 import com.astro.ai.astroai.model.vedicAstro.VedicAstroPlanetDTO;
 import com.astro.ai.astroai.standards.common.AbstractServiceResponse;
@@ -50,6 +51,9 @@ public class ChatQueryService {
 
     @Value("${CHAT_GPT_URL}")
     private String chatGPTBaseUrl;
+
+    @Value("CHAT_GPT4_URL")
+    private String chatGpt4Url;
 
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -106,7 +110,104 @@ public class ChatQueryService {
 
         List<String> astrology = AstroAiUtility.CreateAstrology(planets, dashas);
 
+        findResultFromChatGPT4(astrology, customer, query);
+
         return findResultFromAiService(astrology, customer, query);
+
+    }
+
+    private String findResultFromChatGPT4(List<String> astrology, Customer customer, String query) {
+
+        String firstMessage = "Hi chat GPT i am going to give you four thing First house And PlanetDetails Second planet Detail And Nakshatra Third mahaDasha And AntarDasha Details Fourth A query";
+
+        ChatGPT4RequestBodyDTO firstRequest = new ChatGPT4RequestBodyDTO();
+        firstRequest.setPrompt(firstMessage);
+
+        HttpHeaders headers = GlobalUtility.getChatGPTHeader();
+        Gson gson = new Gson();
+
+        CustomResponse<JsonNode> firstResponse = restManager.post(chatGpt4Url, null, headers, gson.toJson(firstRequest), JsonNode.class);
+
+        logger.info(new LogMessage.LogMessageBuilder("ChatQueryService.findResultFromChatGPT4 response received for first call")
+                .put(AstroAIConstant.CUSTOMER, customer.getCustomerId())
+                .put(AstroAIConstant.RESPONSE, firstResponse.getBody())
+                .put(AstroAIConstant.REQUEST, firstRequest.toString())
+                .put(AstroAIConstant.HEADERS, headers.toString()).build());
+
+        if (!firstResponse.getHttpStatus().is2xxSuccessful()) {
+
+            return "Error";
+        }
+
+        ChatGPT4RequestBodyDTO secondRequest = new ChatGPT4RequestBodyDTO();
+        secondRequest.setPrompt(astrology.get(0));
+
+
+        CustomResponse<JsonNode> secondResponse = restManager.post(chatGpt4Url, null, headers, gson.toJson(secondRequest), JsonNode.class);
+
+        logger.info(new LogMessage.LogMessageBuilder("ChatQueryService.findResultFromChatGPT4 response received for second call")
+                .put(AstroAIConstant.CUSTOMER, customer.getCustomerId())
+                .put(AstroAIConstant.RESPONSE, secondResponse.getBody())
+                .put(AstroAIConstant.REQUEST, secondRequest.toString())
+                .put(AstroAIConstant.HEADERS, headers.toString()).build());
+
+        if (!secondResponse.getHttpStatus().is2xxSuccessful()) {
+
+            return "Error";
+        }
+
+        ChatGPT4RequestBodyDTO thirdRequest = new ChatGPT4RequestBodyDTO();
+        thirdRequest.setPrompt(astrology.get(1));
+
+
+        CustomResponse<JsonNode> thirdResponse = restManager.post(chatGpt4Url, null, headers, gson.toJson(thirdRequest), JsonNode.class);
+
+        logger.info(new LogMessage.LogMessageBuilder("ChatQueryService.findResultFromChatGPT4 response received for third call")
+                .put(AstroAIConstant.CUSTOMER, customer.getCustomerId())
+                .put(AstroAIConstant.RESPONSE, thirdResponse.getBody())
+                .put(AstroAIConstant.REQUEST, thirdRequest.toString())
+                .put(AstroAIConstant.HEADERS, headers.toString()).build());
+
+        if (!thirdResponse.getHttpStatus().is2xxSuccessful()) {
+
+            return "Error";
+        }
+
+        ChatGPT4RequestBodyDTO fourthRequest = new ChatGPT4RequestBodyDTO();
+        fourthRequest.setPrompt(astrology.get(2));
+
+
+        CustomResponse<JsonNode> fourthResponse = restManager.post(chatGpt4Url, null, headers, gson.toJson(fourthRequest), JsonNode.class);
+
+        logger.info(new LogMessage.LogMessageBuilder("ChatQueryService.findResultFromChatGPT4 response received for first call")
+                .put(AstroAIConstant.CUSTOMER, customer.getCustomerId())
+                .put(AstroAIConstant.RESPONSE, fourthResponse.getBody())
+                .put(AstroAIConstant.REQUEST, fourthRequest.toString())
+                .put(AstroAIConstant.HEADERS, headers.toString()).build());
+
+        if (!fourthResponse.getHttpStatus().is2xxSuccessful()) {
+
+            return "Error";
+        }
+
+        ChatGPT4RequestBodyDTO finalRequest = new ChatGPT4RequestBodyDTO();
+        finalRequest.setPrompt("by analysing all above details answer this in short " + query);
+
+
+        CustomResponse<JsonNode> finalResponse = restManager.post(chatGpt4Url, null, headers, gson.toJson(finalRequest), JsonNode.class);
+
+        logger.info(new LogMessage.LogMessageBuilder("ChatQueryService.findResultFromChatGPT4 response received for first call")
+                .put(AstroAIConstant.CUSTOMER, customer.getCustomerId())
+                .put(AstroAIConstant.RESPONSE, finalResponse.getBody())
+                .put(AstroAIConstant.REQUEST, finalRequest.toString())
+                .put(AstroAIConstant.HEADERS, headers.toString()).build());
+
+        if (!finalResponse.getHttpStatus().is2xxSuccessful()) {
+
+            return "Error";
+        }
+
+return "Error";
 
     }
 
@@ -132,11 +233,7 @@ public class ChatQueryService {
 
         aiServiceRequestBodyDTO.setMessages(Arrays.asList(initialMessageDTO, firstMessageDTO, secondMessageDTO, thirdMessageDTO, finalMessageDTO));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        List<ChatGPTCredentials> chatGPTCredentials = CustomORM.getChatGPTKey();
-        headers.set("Authorization", "Bearer " + chatGPTCredentials.get(0).getApiKey());
-
+        HttpHeaders headers = GlobalUtility.getChatGPTHeader();
         int retry = 0;
         Gson gson = new Gson();
         CustomResponse<JsonNode> finalResponse = new RestResponse();
