@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping("astro/ai")
 public class ChatQueryController {
@@ -36,6 +38,12 @@ public class ChatQueryController {
         demoService.minJumps();
 
         return chatQueryService.findResultForChatQuery(payload);
+    }
+
+    @RequestMapping("/ping")
+    public String ping() {
+        System.out.println("Test controller");
+        return new Date().toString();
     }
 
 

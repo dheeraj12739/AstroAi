@@ -1,6 +1,7 @@
 package com.astro.ai.astroai.controller.reflection;
 
 import com.astro.ai.astroai.model.practice.Bird;
+import com.astro.ai.astroai.model.practice.Person;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -132,5 +133,17 @@ public class ReflectionTest {
         assertTrue(walks2);
         assertTrue(bird.isWalks());
 
+    }
+
+    @Test
+    public void isAnnotationCreationSuccess() {
+
+        Person person = new Person();
+        person.setAge(12);
+        person.setName("ankush");
+        person.setLastname("Burkale");
+        person.setGender("Female");
+
+        checkIsMarkedAsSerializable(person);
     }
 }

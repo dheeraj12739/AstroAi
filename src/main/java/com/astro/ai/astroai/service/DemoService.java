@@ -14,34 +14,51 @@ import java.util.concurrent.TimeUnit;
 @EnableScheduling
 public class DemoService {
 
-    public  int find(int dp[], int arr[], int index) {
 
-        if(index >= arr.length) {
-            return 0;
+    public static int findLenIn1DArray(int index, int Mat[][], int M, int N) {
+
+        int left = 0;
+        int right = M-1;
+
+        while(left <= right) {
+
+            int mid = (left+right) / 2;
+            if(mid-1 >=0 && Mat[index][mid]==1 && Mat[index][mid-1]==0) {
+                return N-mid;
+
+            } else if(Mat[index][mid] == 1) {
+
+                right = mid-1;
+            }else {
+                left = mid+1;
+            }
         }
 
-        if(dp[index] != Integer.MIN_VALUE) {
+        return 0;
 
-            return dp[index];
-        }
 
-        for(int i = index; i < arr.length; i++) {
-
-            int temp = find(dp, arr, i+1);
-
-            dp[index] = Math.max(dp[index], Math.max(arr[i] ^ temp, temp));
-        }
-
-        return dp[index];
     }
     public long minJumps() {
-        // Your code goes here
-        int[] arr = new int[]{2,4,5};
-        int N=3;
-        int dp[] = new int[N];
 
-        Arrays.fill(dp, Integer.MIN_VALUE);
-        System.out.println(find(dp, arr, 0));
+        // Your code goes here
+        int N=4;
+        int M=7;
+        int Mat[][] = new int[][] {{0, 0, 1, 1, 1, 1, 1}, {0, 0, 0, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 1, 1,}, {0, 0, 0, 1, 1, 1, 1}};
+
+        int maxLen = Integer.MIN_VALUE;
+        int ans = -1;
+
+        for(int index = 0; index < N; index++) {
+
+            int len = findLenIn1DArray(index, Mat, M, N);
+
+            if(len>maxLen) {
+                ans = index;
+                maxLen = len;
+            }
+        }
+
+        System.out.println(ans);
 
         return 0L;
 
